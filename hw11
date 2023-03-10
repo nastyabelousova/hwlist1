@@ -1,0 +1,1890 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "e16a0c91-ccff-4b64-bf98-fded2847a299",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np # linear algebra \n",
+    "import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)\n",
+    "# stats models: regression fitting via formulas\n",
+    "import statsmodels.formula.api as smf\n",
+    "# stats models: regression fitting via matrices of regression design\n",
+    "import statsmodels.api as sm"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "20291262-5f7b-4d37-b297-ac7751722ae0",
+   "metadata": {},
+   "source": [
+    "### SLEEP EQUAITION"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7eee08dc-d1f0-4028-b39a-4e8e142171b9",
+   "metadata": {},
+   "source": [
+    "### Model 1.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "472a9945-c075-452d-9c3d-7bda75297786",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>age</th>\n",
+       "      <th>black</th>\n",
+       "      <th>case</th>\n",
+       "      <th>clerical</th>\n",
+       "      <th>construc</th>\n",
+       "      <th>educ</th>\n",
+       "      <th>earns74</th>\n",
+       "      <th>gdhlth</th>\n",
+       "      <th>inlf</th>\n",
+       "      <th>leis1</th>\n",
+       "      <th>...</th>\n",
+       "      <th>spwrk75</th>\n",
+       "      <th>totwrk</th>\n",
+       "      <th>union</th>\n",
+       "      <th>worknrm</th>\n",
+       "      <th>workscnd</th>\n",
+       "      <th>exper</th>\n",
+       "      <th>yngkid</th>\n",
+       "      <th>yrsmarr</th>\n",
+       "      <th>hrwage</th>\n",
+       "      <th>agesq</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>32</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>12</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3529</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3438</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3438</td>\n",
+       "      <td>0</td>\n",
+       "      <td>14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>13</td>\n",
+       "      <td>7.070004</td>\n",
+       "      <td>1024</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>31</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>14</td>\n",
+       "      <td>9500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2140</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5020</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5020</td>\n",
+       "      <td>0</td>\n",
+       "      <td>11</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1.429999</td>\n",
+       "      <td>961</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>44</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>17</td>\n",
+       "      <td>42500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4595</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2815</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2815</td>\n",
+       "      <td>0</td>\n",
+       "      <td>21</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>20.529997</td>\n",
+       "      <td>1936</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>30</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>12</td>\n",
+       "      <td>42500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3211</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3786</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3786</td>\n",
+       "      <td>0</td>\n",
+       "      <td>12</td>\n",
+       "      <td>0</td>\n",
+       "      <td>12</td>\n",
+       "      <td>9.619998</td>\n",
+       "      <td>900</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>64</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>14</td>\n",
+       "      <td>2500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4052</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2580</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2580</td>\n",
+       "      <td>0</td>\n",
+       "      <td>44</td>\n",
+       "      <td>0</td>\n",
+       "      <td>33</td>\n",
+       "      <td>2.750000</td>\n",
+       "      <td>4096</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>701</th>\n",
+       "      <td>45</td>\n",
+       "      <td>0</td>\n",
+       "      <td>702</td>\n",
+       "      <td>0.182331</td>\n",
+       "      <td>0.030075</td>\n",
+       "      <td>12</td>\n",
+       "      <td>5500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5069</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2026</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2026</td>\n",
+       "      <td>0</td>\n",
+       "      <td>27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>18</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>2025</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>702</th>\n",
+       "      <td>34</td>\n",
+       "      <td>0</td>\n",
+       "      <td>703</td>\n",
+       "      <td>0.182331</td>\n",
+       "      <td>0.030075</td>\n",
+       "      <td>10</td>\n",
+       "      <td>2500</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5885</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>675</td>\n",
+       "      <td>1</td>\n",
+       "      <td>465</td>\n",
+       "      <td>210</td>\n",
+       "      <td>18</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1156</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>703</th>\n",
+       "      <td>37</td>\n",
+       "      <td>0</td>\n",
+       "      <td>704</td>\n",
+       "      <td>0.182331</td>\n",
+       "      <td>0.030075</td>\n",
+       "      <td>12</td>\n",
+       "      <td>3500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4719</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1851</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1851</td>\n",
+       "      <td>0</td>\n",
+       "      <td>19</td>\n",
+       "      <td>0</td>\n",
+       "      <td>17</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1369</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>704</th>\n",
+       "      <td>54</td>\n",
+       "      <td>0</td>\n",
+       "      <td>705</td>\n",
+       "      <td>0.182331</td>\n",
+       "      <td>0.030075</td>\n",
+       "      <td>17</td>\n",
+       "      <td>32500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5149</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1961</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1481</td>\n",
+       "      <td>480</td>\n",
+       "      <td>31</td>\n",
+       "      <td>0</td>\n",
+       "      <td>22</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>2916</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>705</th>\n",
+       "      <td>30</td>\n",
+       "      <td>0</td>\n",
+       "      <td>706</td>\n",
+       "      <td>0.182331</td>\n",
+       "      <td>0.030075</td>\n",
+       "      <td>16</td>\n",
+       "      <td>6750</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4747</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2363</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2363</td>\n",
+       "      <td>0</td>\n",
+       "      <td>8</td>\n",
+       "      <td>1</td>\n",
+       "      <td>9</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>900</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>706 rows × 34 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     age  black  case  clerical  construc  educ  earns74  gdhlth  inlf  leis1  \\\n",
+       "0     32      0     1  0.000000  0.000000    12        0       0     1   3529   \n",
+       "1     31      0     2  0.000000  0.000000    14     9500       1     1   2140   \n",
+       "2     44      0     3  0.000000  0.000000    17    42500       1     1   4595   \n",
+       "3     30      0     4  0.000000  0.000000    12    42500       1     1   3211   \n",
+       "4     64      0     5  0.000000  0.000000    14     2500       1     1   4052   \n",
+       "..   ...    ...   ...       ...       ...   ...      ...     ...   ...    ...   \n",
+       "701   45      0   702  0.182331  0.030075    12     5500       1     0   5069   \n",
+       "702   34      0   703  0.182331  0.030075    10     2500       0     0   5885   \n",
+       "703   37      0   704  0.182331  0.030075    12     3500       1     0   4719   \n",
+       "704   54      0   705  0.182331  0.030075    17    32500       1     0   5149   \n",
+       "705   30      0   706  0.182331  0.030075    16     6750       1     0   4747   \n",
+       "\n",
+       "     ...  spwrk75  totwrk  union  worknrm  workscnd  exper  yngkid  yrsmarr  \\\n",
+       "0    ...        0    3438      0     3438         0     14       0       13   \n",
+       "1    ...        0    5020      0     5020         0     11       0        0   \n",
+       "2    ...        1    2815      0     2815         0     21       0        0   \n",
+       "3    ...        1    3786      0     3786         0     12       0       12   \n",
+       "4    ...        1    2580      0     2580         0     44       0       33   \n",
+       "..   ...      ...     ...    ...      ...       ...    ...     ...      ...   \n",
+       "701  ...        1    2026      0     2026         0     27       0       18   \n",
+       "702  ...        0     675      1      465       210     18       0        4   \n",
+       "703  ...        1    1851      0     1851         0     19       0       17   \n",
+       "704  ...        1    1961      1     1481       480     31       0       22   \n",
+       "705  ...        0    2363      0     2363         0      8       1        9   \n",
+       "\n",
+       "        hrwage  agesq  \n",
+       "0     7.070004   1024  \n",
+       "1     1.429999    961  \n",
+       "2    20.529997   1936  \n",
+       "3     9.619998    900  \n",
+       "4     2.750000   4096  \n",
+       "..         ...    ...  \n",
+       "701        NaN   2025  \n",
+       "702        NaN   1156  \n",
+       "703        NaN   1369  \n",
+       "704        NaN   2916  \n",
+       "705        NaN    900  \n",
+       "\n",
+       "[706 rows x 34 columns]"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df = pd.read_csv('https://raw.githubusercontent.com/artamonoff/Econometrica/master/python-notebooks/data-csv/sleep75.csv')\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a254fbf4-3bd5-4001-83bb-fcbd3b53fd09",
+   "metadata": {},
+   "source": [
+    "### СПЕЦИФИКАЦИЯ:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "58f04938-fbc5-4299-a9d5-2affdc1cf5e7",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "sleep = \\beta_0 + \\beta_1 * totwork + \\beta_2 * male\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "17869dd6-f26b-481c-b332-2429d5ab1a7e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept    3573.20\n",
+       "totwrk         -0.17\n",
+       "male           88.84\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# специфицируем модель через формулу\n",
+    "sleep_eq1 = smf.ols(formula='sleep~totwrk+male', data=df).fit()\n",
+    "# Коэфициенты модели с округление\n",
+    "sleep_eq1.params.round(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2a6d7aa-7a69-4836-bda8-bd430be824f6",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "sleep = 3573.20 - 0.17 * totwork + 88.84 * male\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "7e3a7137-463a-4cfe-81d7-970b3acb7842",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<caption>OLS Regression Results</caption>\n",
+       "<tr>\n",
+       "  <th>Dep. Variable:</th>          <td>sleep</td>      <th>  R-squared:         </th> <td>   0.112</td> \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.109</td> \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   44.21</td> \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Date:</th>             <td>Fri, 10 Mar 2023</td> <th>  Prob (F-statistic):</th> <td>8.22e-19</td> \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Time:</th>                 <td>19:41:06</td>     <th>  Log-Likelihood:    </th> <td> -5263.8</td> \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>No. Observations:</th>      <td>   706</td>      <th>  AIC:               </th> <td>1.053e+04</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Df Residuals:</th>          <td>   703</td>      <th>  BIC:               </th> <td>1.055e+04</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Df Model:</th>              <td>     2</td>      <th>                     </th>     <td> </td>    \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>    \n",
+       "</tr>\n",
+       "</table>\n",
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "      <td></td>         <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th> <td> 3573.2044</td> <td>   39.090</td> <td>   91.409</td> <td> 0.000</td> <td> 3496.456</td> <td> 3649.952</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>totwrk</th>    <td>   -0.1682</td> <td>    0.018</td> <td>   -9.349</td> <td> 0.000</td> <td>   -0.204</td> <td>   -0.133</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>male</th>      <td>   88.8352</td> <td>   34.386</td> <td>    2.584</td> <td> 0.010</td> <td>   21.325</td> <td>  156.346</td>\n",
+       "</tr>\n",
+       "</table>\n",
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "  <th>Omnibus:</th>       <td>64.996</td> <th>  Durbin-Watson:     </th> <td>   1.951</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Prob(Omnibus):</th> <td> 0.000</td> <th>  Jarque-Bera (JB):  </th> <td> 179.109</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Skew:</th>          <td>-0.460</td> <th>  Prob(JB):          </th> <td>1.28e-39</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Kurtosis:</th>      <td> 5.290</td> <th>  Cond. No.          </th> <td>5.89e+03</td>\n",
+       "</tr>\n",
+       "</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 5.89e+03. This might indicate that there are<br/>strong multicollinearity or other numerical problems."
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.summary.Summary'>\n",
+       "\"\"\"\n",
+       "                            OLS Regression Results                            \n",
+       "==============================================================================\n",
+       "Dep. Variable:                  sleep   R-squared:                       0.112\n",
+       "Model:                            OLS   Adj. R-squared:                  0.109\n",
+       "Method:                 Least Squares   F-statistic:                     44.21\n",
+       "Date:                Fri, 10 Mar 2023   Prob (F-statistic):           8.22e-19\n",
+       "Time:                        19:41:06   Log-Likelihood:                -5263.8\n",
+       "No. Observations:                 706   AIC:                         1.053e+04\n",
+       "Df Residuals:                     703   BIC:                         1.055e+04\n",
+       "Df Model:                           2                                         \n",
+       "Covariance Type:            nonrobust                                         \n",
+       "==============================================================================\n",
+       "                 coef    std err          t      P>|t|      [0.025      0.975]\n",
+       "------------------------------------------------------------------------------\n",
+       "Intercept   3573.2044     39.090     91.409      0.000    3496.456    3649.952\n",
+       "totwrk        -0.1682      0.018     -9.349      0.000      -0.204      -0.133\n",
+       "male          88.8352     34.386      2.584      0.010      21.325     156.346\n",
+       "==============================================================================\n",
+       "Omnibus:                       64.996   Durbin-Watson:                   1.951\n",
+       "Prob(Omnibus):                  0.000   Jarque-Bera (JB):              179.109\n",
+       "Skew:                          -0.460   Prob(JB):                     1.28e-39\n",
+       "Kurtosis:                       5.290   Cond. No.                     5.89e+03\n",
+       "==============================================================================\n",
+       "\n",
+       "Notes:\n",
+       "[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n",
+       "[2] The condition number is large, 5.89e+03. This might indicate that there are\n",
+       "strong multicollinearity or other numerical problems.\n",
+       "\"\"\""
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sleep_eq1.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "04cfe7ca-0881-480c-8ea2-0062f49732f7",
+   "metadata": {},
+   "source": [
+    "## Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d9132755-f789-4690-a0b6-e1fd3855933f",
+   "metadata": {},
+   "source": [
+    "1)При увеличении количества рабочих минут в неделю на единицу, колличество сна в неделю меньшается на 0.17 при прочих равных\n",
+    "2)Мужчины спят в среднем на 88.84 минуты больше"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1d092de8-5905-428e-9d60-1571025fd008",
+   "metadata": {},
+   "source": [
+    "### Model 1.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2915acf5-6973-4721-9c48-b29d496ac7c3",
+   "metadata": {},
+   "source": [
+    "### Спецификация:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aaf65f96-995a-4cf3-aad3-36cba53b7314",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "sleep = \\beta_0 + \\beta_1 * totwork + \\beta_2 * male + \\beta_3 * samsa + \\beta_4 * age + \\beta_5 * south + \\beta_6 * yngkid + \\beta_7 * marr + \\beta_8 * union\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "9752bd82-64c6-4700-bc16-49f4d3e35a4d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept    3446.83\n",
+       "totwrk         -0.17\n",
+       "male           87.11\n",
+       "smsa          -54.19\n",
+       "age             2.71\n",
+       "south         102.27\n",
+       "yngkid        -13.05\n",
+       "marr           31.36\n",
+       "union          11.87\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# специфицируем модель через формулу\n",
+    "sleep_eq2 = smf.ols(formula='sleep~totwrk+male+smsa+age+south+yngkid+marr+union', data=df).fit()\n",
+    "# Коэфициенты модели с округление\n",
+    "sleep_eq2.params.round(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b75903b5-7853-42e2-98be-6b9b626b5a20",
+   "metadata": {},
+   "source": [
+    "## Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2855f0c0-a5ea-455d-ac94-70e77153def6",
+   "metadata": {},
+   "source": [
+    "При увеличении количества рабочих минут в неделю на единицу, колличество сна в неделю меньшается на 0.17 при прочих равных\n",
+    "Мужчины спят в среднем на 87.11 минуты в неделю больше"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ea05f0d7-b2aa-4790-9355-8e4d7b5774fd",
+   "metadata": {},
+   "source": [
+    "### Model 1.3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a38a090e-6a96-4910-a380-4758c88ab312",
+   "metadata": {},
+   "source": [
+    "### Спецификация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8702741b-3df4-4034-8bba-12bd0796b641",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "sleep = \\beta_0 + \\beta_1 * totwork + \\beta_2 * male + \\beta_3 * samsa + \\beta_4 * age + \\beta_5 * south + \\beta_6 * yngkid + \\beta_7 * marr + \\beta_8 * log(hrwage)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "1c1390a0-b7b2-46c1-87b1-e8ea27dcb59b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept         3440.19\n",
+       "totwrk              -0.16\n",
+       "male                36.87\n",
+       "smsa               -36.96\n",
+       "age                  2.37\n",
+       "south               76.27\n",
+       "yngkid              47.92\n",
+       "marr                53.34\n",
+       "np.log(hrwage)      -1.39\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# специфицируем модель через формулу\n",
+    "sleep_eq2 = smf.ols(formula='sleep~totwrk+male+smsa+age+south+yngkid+marr+np.log(hrwage)', data=df).fit()\n",
+    "# Коэфициенты модели с округление\n",
+    "sleep_eq2.params.round(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d0903bb6-d11d-4458-b478-3559d6113c33",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a189a4f8-c88b-40cc-89d7-c54420b118e3",
+   "metadata": {},
+   "source": [
+    "Человек, проживающий в мегаполисе, спит в среднем на 36.96 минут в неделю меньше\n",
+    "При изменении почасовой оплаты на 1% человек спит на 0.00139 минуты в неделю меньше"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f69daac2-7243-4082-ac87-102e1184136f",
+   "metadata": {},
+   "source": [
+    "### Wage equaition"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8013d075-c123-4437-b372-2f83ed43681d",
+   "metadata": {},
+   "source": [
+    "### Model 2.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "ebee3fbb-8d28-47d1-9d26-809d55a661d8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>wage</th>\n",
+       "      <th>hours</th>\n",
+       "      <th>IQ</th>\n",
+       "      <th>KWW</th>\n",
+       "      <th>educ</th>\n",
+       "      <th>exper</th>\n",
+       "      <th>tenure</th>\n",
+       "      <th>age</th>\n",
+       "      <th>married</th>\n",
+       "      <th>black</th>\n",
+       "      <th>south</th>\n",
+       "      <th>urban</th>\n",
+       "      <th>sibs</th>\n",
+       "      <th>brthord</th>\n",
+       "      <th>meduc</th>\n",
+       "      <th>feduc</th>\n",
+       "      <th>lwage</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>769</td>\n",
+       "      <td>40</td>\n",
+       "      <td>93</td>\n",
+       "      <td>35</td>\n",
+       "      <td>12</td>\n",
+       "      <td>11</td>\n",
+       "      <td>2</td>\n",
+       "      <td>31</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>6.645091</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>808</td>\n",
+       "      <td>50</td>\n",
+       "      <td>119</td>\n",
+       "      <td>41</td>\n",
+       "      <td>18</td>\n",
+       "      <td>11</td>\n",
+       "      <td>16</td>\n",
+       "      <td>37</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>6.694562</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>825</td>\n",
+       "      <td>40</td>\n",
+       "      <td>108</td>\n",
+       "      <td>46</td>\n",
+       "      <td>14</td>\n",
+       "      <td>11</td>\n",
+       "      <td>9</td>\n",
+       "      <td>33</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>6.715384</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>650</td>\n",
+       "      <td>40</td>\n",
+       "      <td>96</td>\n",
+       "      <td>32</td>\n",
+       "      <td>12</td>\n",
+       "      <td>13</td>\n",
+       "      <td>7</td>\n",
+       "      <td>32</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>6.476973</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>562</td>\n",
+       "      <td>40</td>\n",
+       "      <td>74</td>\n",
+       "      <td>27</td>\n",
+       "      <td>11</td>\n",
+       "      <td>14</td>\n",
+       "      <td>5</td>\n",
+       "      <td>34</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>10</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>11.0</td>\n",
+       "      <td>6.331502</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>930</th>\n",
+       "      <td>520</td>\n",
+       "      <td>40</td>\n",
+       "      <td>79</td>\n",
+       "      <td>28</td>\n",
+       "      <td>16</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>30</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>11.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>6.253829</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>931</th>\n",
+       "      <td>1202</td>\n",
+       "      <td>40</td>\n",
+       "      <td>102</td>\n",
+       "      <td>32</td>\n",
+       "      <td>13</td>\n",
+       "      <td>10</td>\n",
+       "      <td>3</td>\n",
+       "      <td>31</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>7.091742</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>932</th>\n",
+       "      <td>538</td>\n",
+       "      <td>45</td>\n",
+       "      <td>77</td>\n",
+       "      <td>22</td>\n",
+       "      <td>12</td>\n",
+       "      <td>12</td>\n",
+       "      <td>10</td>\n",
+       "      <td>28</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>9</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>6.287858</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>933</th>\n",
+       "      <td>873</td>\n",
+       "      <td>44</td>\n",
+       "      <td>109</td>\n",
+       "      <td>25</td>\n",
+       "      <td>12</td>\n",
+       "      <td>12</td>\n",
+       "      <td>12</td>\n",
+       "      <td>28</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>11.0</td>\n",
+       "      <td>6.771935</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>934</th>\n",
+       "      <td>1000</td>\n",
+       "      <td>40</td>\n",
+       "      <td>107</td>\n",
+       "      <td>32</td>\n",
+       "      <td>12</td>\n",
+       "      <td>17</td>\n",
+       "      <td>18</td>\n",
+       "      <td>35</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>6.907755</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>935 rows × 17 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     wage  hours   IQ  KWW  educ  exper  tenure  age  married  black  south  \\\n",
+       "0     769     40   93   35    12     11       2   31        1      0      0   \n",
+       "1     808     50  119   41    18     11      16   37        1      0      0   \n",
+       "2     825     40  108   46    14     11       9   33        1      0      0   \n",
+       "3     650     40   96   32    12     13       7   32        1      0      0   \n",
+       "4     562     40   74   27    11     14       5   34        1      0      0   \n",
+       "..    ...    ...  ...  ...   ...    ...     ...  ...      ...    ...    ...   \n",
+       "930   520     40   79   28    16      6       1   30        1      1      1   \n",
+       "931  1202     40  102   32    13     10       3   31        1      0      1   \n",
+       "932   538     45   77   22    12     12      10   28        1      1      1   \n",
+       "933   873     44  109   25    12     12      12   28        1      0      1   \n",
+       "934  1000     40  107   32    12     17      18   35        1      0      1   \n",
+       "\n",
+       "     urban  sibs  brthord  meduc  feduc     lwage  \n",
+       "0        1     1      2.0    8.0    8.0  6.645091  \n",
+       "1        1     1      NaN   14.0   14.0  6.694562  \n",
+       "2        1     1      2.0   14.0   14.0  6.715384  \n",
+       "3        1     4      3.0   12.0   12.0  6.476973  \n",
+       "4        1    10      6.0    6.0   11.0  6.331502  \n",
+       "..     ...   ...      ...    ...    ...       ...  \n",
+       "930      0     0      1.0   11.0    NaN  6.253829  \n",
+       "931      1     7      7.0    8.0    6.0  7.091742  \n",
+       "932      0     9      NaN    7.0    NaN  6.287858  \n",
+       "933      0     1      1.0    NaN   11.0  6.771935  \n",
+       "934      0     5      1.0    NaN    NaN  6.907755  \n",
+       "\n",
+       "[935 rows x 17 columns]"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_wage = pd.read_csv('https://raw.githubusercontent.com/artamonoff/Econometrica/master/python-notebooks/data-csv/wage2.csv')\n",
+    "df_wage"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "12feb482-bac4-4f6d-a616-c1384df04414",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(wage) = \\beta_0 +\\beta_1 * age + \\beta_2 * IQ\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "8530f891-aaef-47d8-b40e-3e0143f6158a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept    5.077\n",
+       "age          0.024\n",
+       "IQ           0.009\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "labour_eq = smf.ols(formula='np.log(wage)~age+IQ', data=df_wage).fit()\n",
+    "labour_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "03467541-18f6-4282-a8be-15ca6a8adc2b",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "602224b0-3f39-4e09-8692-32a4c92fd671",
+   "metadata": {},
+   "source": [
+    "Прирост возраста на 1 год увеличивает месячную зарплату на 2.4%\n",
+    "Увеличение результата теста IQ на 1 балл увеличивает месячную зарплату на 0.9%"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "becf6ff3-671c-4e1b-9b03-cf868723760d",
+   "metadata": {},
+   "source": [
+    "### Model 2.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "017a2084-1998-4f6d-a9de-11666ff2ec1e",
+   "metadata": {},
+   "source": [
+    "### Cпецификация "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "19432ffa-4669-4a5f-87aa-44234cfec1b7",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "np.log(wage) = \\beta_0 + \\beta_1 * age + \\beta_2 * IQ + \\beta_3 * south + \\beta_4 * urban + \\beta_5 * married + \\beta_6 * KWW\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "c6fc68c3-3c6e-47df-bd48-0e149d5a72f8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept    5.126\n",
+       "age          0.014\n",
+       "IQ           0.007\n",
+       "south       -0.101\n",
+       "urban        0.165\n",
+       "married      0.191\n",
+       "KWW          0.007\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "wage_eq = smf.ols(formula='np.log(wage)~age+IQ+south+urban+married+KWW', data=df_wage).fit()\n",
+    "wage_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8ce0203a-d5b1-4e56-807a-df8231d48f2a",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "126e3469-21e0-461c-8bbf-b5d35f6e7d81",
+   "metadata": {},
+   "source": [
+    "1)При увеличении возраста на 1 год, зарплата увеличивается на 1,4% при прочих равных\n",
+    "\n",
+    "2)При увеличении IQ на 1 единицу, зарплата возрастает на 0.7% при прочих равных условиях\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ab0ba219-6ad9-4de7-be50-2decf92929a6",
+   "metadata": {},
+   "source": [
+    "### Output Equation "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9248285c-eedf-413f-a483-915a84f8d9df",
+   "metadata": {},
+   "source": [
+    "## Model 3.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "4b6c1b3c-a52a-431e-9d6a-c4a57120a6ef",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>capital</th>\n",
+       "      <th>labour</th>\n",
+       "      <th>output</th>\n",
+       "      <th>wage</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>2.606563</td>\n",
+       "      <td>184</td>\n",
+       "      <td>9.250759</td>\n",
+       "      <td>43.080307</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1.323237</td>\n",
+       "      <td>91</td>\n",
+       "      <td>3.664310</td>\n",
+       "      <td>27.780016</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>22.093692</td>\n",
+       "      <td>426</td>\n",
+       "      <td>28.781516</td>\n",
+       "      <td>44.467748</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>10.737851</td>\n",
+       "      <td>72</td>\n",
+       "      <td>4.124642</td>\n",
+       "      <td>39.734710</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.161365</td>\n",
+       "      <td>46</td>\n",
+       "      <td>2.890150</td>\n",
+       "      <td>34.650709</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>564</th>\n",
+       "      <td>2.625403</td>\n",
+       "      <td>20</td>\n",
+       "      <td>1.424376</td>\n",
+       "      <td>33.477545</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>565</th>\n",
+       "      <td>1.276386</td>\n",
+       "      <td>61</td>\n",
+       "      <td>2.109048</td>\n",
+       "      <td>26.300732</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>566</th>\n",
+       "      <td>1.953869</td>\n",
+       "      <td>117</td>\n",
+       "      <td>6.241870</td>\n",
+       "      <td>41.153979</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>567</th>\n",
+       "      <td>1.318527</td>\n",
+       "      <td>46</td>\n",
+       "      <td>7.902237</td>\n",
+       "      <td>66.720139</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>568</th>\n",
+       "      <td>2.832391</td>\n",
+       "      <td>161</td>\n",
+       "      <td>6.804085</td>\n",
+       "      <td>36.618435</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>569 rows × 4 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       capital  labour     output       wage\n",
+       "0     2.606563     184   9.250759  43.080307\n",
+       "1     1.323237      91   3.664310  27.780016\n",
+       "2    22.093692     426  28.781516  44.467748\n",
+       "3    10.737851      72   4.124642  39.734710\n",
+       "4     1.161365      46   2.890150  34.650709\n",
+       "..         ...     ...        ...        ...\n",
+       "564   2.625403      20   1.424376  33.477545\n",
+       "565   1.276386      61   2.109048  26.300732\n",
+       "566   1.953869     117   6.241870  41.153979\n",
+       "567   1.318527      46   7.902237  66.720139\n",
+       "568   2.832391     161   6.804085  36.618435\n",
+       "\n",
+       "[569 rows x 4 columns]"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_lab = pd.read_csv('https://raw.githubusercontent.com/artamonoff/Econometrica/master/python-notebooks/data-csv/Labour.csv')\n",
+    "df_lab"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "35c07eeb-4253-4251-917d-7fb0570386e8",
+   "metadata": {},
+   "source": [
+    "### Спецификация "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0e5e3eb0-0e21-4155-bc5d-16ce1c088bcb",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(output) = \\beta_0 + \\beta_1 * log(capital) + \\beta_2 * log(labour)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "f2a81a8a-eb76-4c42-8db1-cec3e417d4ea",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept         -1.711\n",
+       "np.log(capital)    0.208\n",
+       "np.log(labour)     0.715\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "labour_eq = smf.ols(formula='np.log(output)~np.log(capital)+np.log(labour)', data=df_lab).fit()\n",
+    "labour_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5b2d2a7c-91e9-4edb-89cf-a1cb4c5c2f05",
+   "metadata": {},
+   "source": [
+    "### Интерпретация "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "045b6e40-7802-41cd-abe7-f15e0039642d",
+   "metadata": {},
+   "source": [
+    "1)При увеличении количества капитала на 1%, колличество выпуска увеличивается на 0.208% при прочих равных\n",
+    "\n",
+    "2)При увеличении количества рабочих на 1%, колличество выпуска возрастает на 0.715% при прочих равных условиях"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8a3a9c71-0ec3-45f7-9b7f-088c4b32d03c",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(output) = -1.711 + 0.208 * log(capital) + 0.715 * log(labour)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d84ba650-3113-46a3-bf55-ff9c9b1ccf72",
+   "metadata": {},
+   "source": [
+    "### Model 3.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9196a4cc-21c6-485b-ab2a-82a3d839543a",
+   "metadata": {},
+   "source": [
+    "### Спецификация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c4af2aad-148e-40f2-9458-2ec90e53a599",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(output) = \\beta_0 + \\beta_1 * log(capital) + \\beta_2 * log(labour) + \\beta_3 * log (wage)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "904aec7d-9ca1-4f2b-87a1-d0c7157bce67",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept         -5.007\n",
+       "np.log(capital)    0.149\n",
+       "np.log(labour)     0.720\n",
+       "np.log(wage)       0.921\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "labour_eq = smf.ols(formula='np.log(output)~np.log(capital)+np.log(labour)+np.log(wage)', data=df_lab).fit()\n",
+    "labour_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c45b75e9-99a3-4f9d-ae10-797e9b9b4f41",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7e10e2c-85d8-4901-9de7-fe06de081083",
+   "metadata": {},
+   "source": [
+    "При увеличении количества капитала на 1%, колличество выпуска увеличивается на 0.149% при прочих равных\n",
+    "\n",
+    "При увеличении количества рабочих на 1%, колличество выпуска возрастает на 0.72% при прочих равных условиях"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "660b53e0-121a-4251-b828-11c7a5037ba5",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(output) = -5.007 + 0.149 * log(capital) + 0.720 * log(labour) + 0.921 * log (wage)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b9ab62ab-64c0-41a4-b167-ca9a428aae6c",
+   "metadata": {},
+   "source": [
+    "### Cost Equation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "38fa7fea-79e9-415f-8430-ad47202777c5",
+   "metadata": {},
+   "source": [
+    "### Model 4.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "1dad692d-56e9-4571-a280-032ad8de558a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>cost</th>\n",
+       "      <th>q</th>\n",
+       "      <th>pl</th>\n",
+       "      <th>sl</th>\n",
+       "      <th>pk</th>\n",
+       "      <th>sk</th>\n",
+       "      <th>pf</th>\n",
+       "      <th>sf</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0.2130</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>6869.47</td>\n",
+       "      <td>0.3291</td>\n",
+       "      <td>64.945</td>\n",
+       "      <td>0.4197</td>\n",
+       "      <td>18.000</td>\n",
+       "      <td>0.2512</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>3.0427</td>\n",
+       "      <td>869.0</td>\n",
+       "      <td>8372.96</td>\n",
+       "      <td>0.1030</td>\n",
+       "      <td>68.227</td>\n",
+       "      <td>0.2913</td>\n",
+       "      <td>21.067</td>\n",
+       "      <td>0.6057</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>9.4059</td>\n",
+       "      <td>1412.0</td>\n",
+       "      <td>7960.90</td>\n",
+       "      <td>0.0891</td>\n",
+       "      <td>40.692</td>\n",
+       "      <td>0.1567</td>\n",
+       "      <td>41.530</td>\n",
+       "      <td>0.7542</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0.7606</td>\n",
+       "      <td>65.0</td>\n",
+       "      <td>8971.89</td>\n",
+       "      <td>0.2802</td>\n",
+       "      <td>41.243</td>\n",
+       "      <td>0.1282</td>\n",
+       "      <td>28.539</td>\n",
+       "      <td>0.5916</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2.2587</td>\n",
+       "      <td>295.0</td>\n",
+       "      <td>8218.40</td>\n",
+       "      <td>0.1772</td>\n",
+       "      <td>71.940</td>\n",
+       "      <td>0.1623</td>\n",
+       "      <td>39.200</td>\n",
+       "      <td>0.6606</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>153</th>\n",
+       "      <td>6.8293</td>\n",
+       "      <td>946.6</td>\n",
+       "      <td>10642.16</td>\n",
+       "      <td>0.0883</td>\n",
+       "      <td>43.600</td>\n",
+       "      <td>0.1914</td>\n",
+       "      <td>51.463</td>\n",
+       "      <td>0.7203</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>154</th>\n",
+       "      <td>3.7605</td>\n",
+       "      <td>377.0</td>\n",
+       "      <td>7432.24</td>\n",
+       "      <td>0.2117</td>\n",
+       "      <td>74.120</td>\n",
+       "      <td>0.2274</td>\n",
+       "      <td>33.436</td>\n",
+       "      <td>0.5609</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>155</th>\n",
+       "      <td>3.9822</td>\n",
+       "      <td>391.0</td>\n",
+       "      <td>5826.04</td>\n",
+       "      <td>0.1926</td>\n",
+       "      <td>78.288</td>\n",
+       "      <td>0.0924</td>\n",
+       "      <td>44.633</td>\n",
+       "      <td>0.7151</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>156</th>\n",
+       "      <td>30.1880</td>\n",
+       "      <td>5317.0</td>\n",
+       "      <td>9586.63</td>\n",
+       "      <td>0.0845</td>\n",
+       "      <td>78.008</td>\n",
+       "      <td>0.2009</td>\n",
+       "      <td>41.840</td>\n",
+       "      <td>0.7147</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>157</th>\n",
+       "      <td>67.8562</td>\n",
+       "      <td>15220.0</td>\n",
+       "      <td>6986.09</td>\n",
+       "      <td>0.1451</td>\n",
+       "      <td>74.025</td>\n",
+       "      <td>0.2596</td>\n",
+       "      <td>25.662</td>\n",
+       "      <td>0.5945</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>158 rows × 8 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        cost        q        pl      sl      pk      sk      pf      sf\n",
+       "0     0.2130      8.0   6869.47  0.3291  64.945  0.4197  18.000  0.2512\n",
+       "1     3.0427    869.0   8372.96  0.1030  68.227  0.2913  21.067  0.6057\n",
+       "2     9.4059   1412.0   7960.90  0.0891  40.692  0.1567  41.530  0.7542\n",
+       "3     0.7606     65.0   8971.89  0.2802  41.243  0.1282  28.539  0.5916\n",
+       "4     2.2587    295.0   8218.40  0.1772  71.940  0.1623  39.200  0.6606\n",
+       "..       ...      ...       ...     ...     ...     ...     ...     ...\n",
+       "153   6.8293    946.6  10642.16  0.0883  43.600  0.1914  51.463  0.7203\n",
+       "154   3.7605    377.0   7432.24  0.2117  74.120  0.2274  33.436  0.5609\n",
+       "155   3.9822    391.0   5826.04  0.1926  78.288  0.0924  44.633  0.7151\n",
+       "156  30.1880   5317.0   9586.63  0.0845  78.008  0.2009  41.840  0.7147\n",
+       "157  67.8562  15220.0   6986.09  0.1451  74.025  0.2596  25.662  0.5945\n",
+       "\n",
+       "[158 rows x 8 columns]"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_elec = pd.read_csv('https://raw.githubusercontent.com/artamonoff/Econometrica/master/python-notebooks/data-csv/Electricity.csv')\n",
+    "df_elec"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0010723-00af-4398-b646-1c27c9cb167e",
+   "metadata": {},
+   "source": [
+    "### Спецификация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5774ccdb-fa46-443b-80c9-a3fb92c7aba5",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(cost) = \\beta_0 + \\beta_1 * log(q)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "5fb9a58d-3cbc-4ba8-9ef4-ee6f4308c88e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept   -3.841\n",
+       "np.log(q)    0.836\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "electricity_eq = smf.ols(formula='np.log(cost)~np.log(q)', data=df_elec).fit()\n",
+    "electricity_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "46c5384a-838f-4106-a9c8-4fb33a0d8f96",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c9857d59-4a0c-460b-9d92-12f3b2dd72be",
+   "metadata": {},
+   "source": [
+    "При увеличении общего выпуска электроэнергии на 1%, общие издержки за год увеличиваются на 0.836%"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7accf97-a0a5-4ae1-b627-f875edceccf3",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(cost) = -3.841 + 0.836 * log(q)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b43a1398-a789-4e44-9c05-cdec3c1f36e4",
+   "metadata": {},
+   "source": [
+    "### Model 4.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f679a4ca-3526-4a8b-a080-5b1068f8b657",
+   "metadata": {},
+   "source": [
+    "### Спецификация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "28f98845-b860-44bd-8504-9e617c7527bb",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(cost) = \\beta_0 + \\beta_1 * log(q) + \\beta_2 * log(pl) + \\beta_3 * log(pf) + \\beta_4 * log(pk)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "c7668a0e-0162-4172-8ddb-8ca8d6da021d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Intercept    -7.472\n",
+       "np.log(q)     0.838\n",
+       "np.log(pl)    0.044\n",
+       "np.log(pf)    0.713\n",
+       "np.log(pk)    0.188\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "electricity_eq = smf.ols(formula='np.log(cost)~np.log(q)+np.log(pl)+np.log(pf)+np.log(pk)', data=df_elec).fit()\n",
+    "electricity_eq.params.round(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "003c04c4-21cf-46ad-88a0-c64b5d2355b6",
+   "metadata": {},
+   "source": [
+    "### Интерпретация"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b4a7c2d9-7583-4936-aa1a-5dd135b6dd49",
+   "metadata": {},
+   "source": [
+    "При увеличении общего выпуска электроэнергии на 1%, общие издержки за год увеличиваются на 0.838%"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cfe55c07-96a0-44b2-9b0d-efcc699a8029",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "log(cost) = -7.472 + 0.838 * log(q) + 0.044 * log(pl) + 0.713 * log(pf) + 0.188 * log(pk)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e00824d6-fcad-42fe-b6c3-a518ed4aae37",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "anaconda-2022.05-py39",
+   "language": "python",
+   "name": "conda-env-anaconda-2022.05-py39-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
